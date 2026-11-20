@@ -3,24 +3,74 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SERVER // DUAL_ACCESS</title>
+    <title>Closerwolf's Blog</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
     <style>
         body {
+            background-color: #fcfcfc;
+            color: #333;
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            transition: background-color 0.5s ease;
+        }
+        .nav-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 40px;
+            background-color: #fff;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .logo {
+            font-weight: bold;
+            font-size: 20px;
+            letter-spacing: 1px;
+        }
+        .login-btn {
+            color: #888;
+            text-decoration: none;
+            font-size: 14px;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        .login-btn:hover {
+            color: #000;
+        }
+        .content {
+            max-width: 800px;
+            margin: 60px auto;
+            padding: 0 20px;
+        }
+        h1 { font-size: 36px; margin-bottom: 10px; }
+        .subtitle { color: #666; font-size: 18px; margin-bottom: 40px; }
+        .post {
+            border-bottom: 1px solid #eee;
+            padding-bottom: 20px;
+            margin-bottom: 20px;
+        }
+        .post h2 { font-size: 24px; margin-bottom: 5px; }
+        .post .date { color: #999; font-size: 14px; margin-bottom: 10px; }
+        .post p { line-height: 1.6; color: #444; }
+
+        #terminalModal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
             background-color: #050505;
             color: #888;
             font-family: "Courier New", Courier, monospace;
             padding: 40px;
-            display: flex;
+            box-sizing: border-box;
+            z-index: 9999;
+            overflow-y: auto;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            min-height: 80vh;
-            user-select: none;
-            overflow: hidden;
         }
-        .terminal-box { width: 100%; max-width: 700px; }
-        .header { color: #fff; font-size: 20px; margin-bottom: 20px; border-bottom: 1px solid #333; padding-bottom: 10px; }
+        .terminal-box { width: 100%; max-width: 700px; margin-top: 5vh; }
+        .header { color: #fff; font-size: 20px; margin-bottom: 20px; border-bottom: 1px solid #333; padding-bottom: 10px; display: flex; justify-content: space-between;}
+        .close-btn { color: #555; cursor: pointer; font-size: 14px; }
+        .close-btn:hover { color: #fff; }
         .warning { color: #8b0000; font-size: 12px; margin-bottom: 30px; }
         
         .login-section { display: flex; justify-content: space-between; gap: 20px; margin-bottom: 30px; }
@@ -53,47 +103,78 @@
 </head>
 <body>
 
-    <div class="terminal-box">
-        <div class="header">> SERVER ROOT ACCESS // NODE_04</div>
-        <div class="warning">> NOTICE: MULTIPLE HOSTS DETECTED. BIOMETRIC DATA REQUIRED.</div>
+    <div class="nav-bar">
+        <div class="logo">CLOSERWOLF</div>
+        <a class="login-btn" onclick="openTerminal()">[ LOGIN ]</a>
+    </div>
 
-        <div class="login-section">
-            <div class="account-box">
-                <div class="account-title cw">ACCOUNT: CLOSERWOLF</div>
-                <input type="text" id="cwPass" placeholder="Enter phrase...">
-                <button onclick="loginCW()">[ LOG IN ]</button>
-                <div id="cwMsg" class="msg"></div>
+    <div class="content">
+        <h1>Hello, I'm Closerwolf.</h1>
+        <div class="subtitle">A hardcore MCPE player. Exploring the old versions.</div>
+
+        <div class="post">
+            <h2>About me</h2>
+            <p>I've been playing Minecraft PE since 0.5.0 alpha. I love digging into the source code, finding old glitches, and discovering illegal items that normal players never see.</p>
+        </div>
+
+        <div class="post">
+            <h2>Recent Update</h2>
+            <div class="date">October 24, 2026</div>
+            <p>I tried upgrading to 0.17.1. But the pyramid keeps resetting. I don't know what's wrong with this save file. Maybe I should just delete it.</p>
+        </div>
+
+        <div class="post">
+            <h2>Disclaimer</h2>
+            <p>All records here are for testing purposes only. Do not download any files from this site if you are not prepared.</p>
+        </div>
+    </div>
+
+    <div id="terminalModal">
+        <div class="terminal-box">
+            <div class="header">
+                <span>> SERVER ROOT ACCESS // NODE_04</span>
+                <span class="close-btn" onclick="closeTerminal()">[ CLOSE X ]</span>
+            </div>
+            <div class="warning">> NOTICE: MULTIPLE HOSTS DETECTED. BIOMETRIC DATA REQUIRED.</div>
+
+            <div class="login-section">
+                <div class="account-box">
+                    <div class="account-title cw">ACCOUNT: CLOSERWOLF</div>
+                    <input type="text" id="cwPass" placeholder="Enter phrase...">
+                    <button onclick="loginCW()">[ LOG IN ]</button>
+                    <div id="cwMsg" class="msg"></div>
+                </div>
+
+                <div class="account-box">
+                    <div class="account-title wolf">ACCOUNT: ???_WOLF</div>
+                    <input type="text" id="wolfPass" placeholder="Enter phrase...">
+                    <button onclick="loginWolf()">[ LOG IN ]</button>
+                    <div id="wolfMsg" class="msg"></div>
+                </div>
             </div>
 
-            <div class="account-box">
-                <div class="account-title wolf">ACCOUNT: ???_WOLF</div>
-                <input type="text" id="wolfPass" placeholder="Enter phrase...">
-                <button onclick="loginWolf()">[ LOG IN ]</button>
-                <div id="wolfMsg" class="msg"></div>
+            <div id="cwContent">
+                <div class="log-title" style="color: #4a7c59;">[ CLOSERWOLF'S LOG ]</div>
+                <p>I don't know why I'm still here.</p>
+                <p>The pyramid resets every time I leave. I tried blowing it up with TNT, but the chunks just rebuild themselves.</p>
+                <p>It saved me from the void. I should be grateful. But I feel like I'm in a cage.</p>
+                <p>I found a way to delete him. But if I do... the person in reality dies.</p>
+                <p>Why did it have to be me?</p>
             </div>
-        </div>
 
-        <div id="cwContent">
-            <div class="log-title" style="color: #4a7c59;">[ CLOSERWOLF'S LOG ]</div>
-            <p>I don't know why I'm still here.</p>
-            <p>The pyramid resets every time I leave. I tried blowing it up with TNT, but the chunks just rebuild themselves.</p>
-            <p>It saved me from the void. I should be grateful. But I feel like I'm in a cage.</p>
-            <p>I found a way to delete him. But if I do... the person in reality dies.</p>
-            <p>Why did it have to be me?</p>
-        </div>
+            <div id="wolfContent">
+                <div class="log-title" style="color: #8b0000;">[ UNKNOWN HOST'S LOG ]</div>
+                <p>Real-world connection lost: 404 days ago.</p>
+                <p>I can hear the machines beeping. But I can't open my eyes.</p>
+                <p>I built this pyramid as a grave for myself, to keep the void from eating the server.</p>
+                <p>When the boy fell in, I had no choice but to pull him out.</p>
+                <p><strong>I can't speak to you. Not unless you look at me.</strong></p>
+                <p>He hates me. I understand. But if he deletes me, the machine will turn off. And I will finally rest.</p>
+            </div>
 
-        <div id="wolfContent">
-            <div class="log-title" style="color: #8b0000;">[ UNKNOWN HOST'S LOG ]</div>
-            <p>Real-world connection lost: 404 days ago.</p>
-            <p>I can hear the machines beeping. But I can't open my eyes.</p>
-            <p>I built this pyramid as a grave for myself, to keep the void from eating the server.</p>
-            <p>When the boy fell in, I had no choice but to pull him out.</p>
-            <p><strong>I can't speak to you. Not unless you look at me.</strong></p>
-            <p>He hates me. I understand. But if he deletes me, the machine will turn off. And I will finally rest.</p>
-        </div>
-
-        <div id="finalMessage" style="display: none; text-align: center; margin-top: 40px; color: #8b0000; font-size: 20px; letter-spacing: 3px;">
-            [ BOTH HOSTS CONNECTED. WAIT FOR RECORD_05. ]
+            <div id="finalMessage" style="display: none; text-align: center; margin-top: 40px; color: #8b0000; font-size: 20px; letter-spacing: 3px;">
+                [ BOTH HOSTS CONNECTED. WAIT FOR RECORD_05. ]
+            </div>
         </div>
     </div>
 
@@ -103,6 +184,14 @@
 
         var isCWLogged = false;
         var isWolfLogged = false;
+
+        function openTerminal() {
+            document.getElementById("terminalModal").style.display = "flex";
+        }
+
+        function closeTerminal() {
+            document.getElementById("terminalModal").style.display = "none";
+        }
 
         function checkBoth() {
             if (isCWLogged && isWolfLogged) {
@@ -154,14 +243,6 @@
 
         document.getElementById("cwPass").addEventListener("keypress", function(e) { if(e.key === "Enter") loginCW(); });
         document.getElementById("wolfPass").addEventListener("keypress", function(e) { if(e.key === "Enter") loginWolf(); });
-
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i'))) {
-                e.preventDefault();
-                document.body.innerHTML = "<div style='color:#8b0000; font-family:monospace; padding:50px; text-align:center; font-size:20px;'>[ DO NOT LOOK AT THE CODE. ]</div>";
-            }
-        });
-        document.addEventListener('contextmenu', function(e) { e.preventDefault(); });
     </script>
 </body>
 </html>
