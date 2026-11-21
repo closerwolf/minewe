@@ -149,7 +149,7 @@
             try {
                 var response = await fetch(`${API_BASE_URL}/api/login/cw`, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'text/plain' },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ passwd_hash: hashedInput })
                 });
 
@@ -183,7 +183,7 @@
             try {
                 var response = await fetch(`${API_BASE_URL}/api/login/wolf`, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'text/plain' },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ passwd_hash: hashedInput })
                 });
 
@@ -211,7 +211,7 @@
                 try {
                     var response = await fetch(`${API_BASE_URL}/api/unlockBoth`, {
                         method: 'POST',
-                        headers: { 'Content-Type': 'text/plain' },
+                        headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ 
                             passwd_CW_hash: "a31d9dcf5f15d3fb0b9ac6f348260b422202792fb3e34cd737e41150c8864ea7", 
                             passwd_wolf_hash: "ed2cb2f00755c9e76ff89fabad38c92f827f133e9fcd0506ea5a2172a38e99c9" 
