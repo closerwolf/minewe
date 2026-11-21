@@ -1,0 +1,29 @@
+name: ws-url-listener
+
+on:
+  schedule:
+    - cron: "0 */5 * * *"   # 每 5 小时拉起一个，任务自身跑约 5h50m，靠 concurrency 衔接
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ws-url-listener
+  cancel-in-progress: false
+
+jobs:
+  listen:
+    runs-on: ubuntu-latest
+    timeout-minutes: 350          # GitHub 单 job 上限 6h，留余量
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install --quiet websockets
+      - name: Listen
+        env:
+          WS_URL: ${{ secrets.WS_URL }}          # 例如 ws://1.2.3.4:9000/ws
+          LISTEN_SECONDS: "20880"
+        run: python deploy/ws_listener.py
