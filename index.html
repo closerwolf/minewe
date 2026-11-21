@@ -22,33 +22,14 @@
             background-color: #fff;
             box-shadow: 0 2px 5px rgba(0,0,0,0.05);
         }
-        .logo {
-            font-weight: bold;
-            font-size: 20px;
-            letter-spacing: 1px;
-        }
-        .login-btn {
-            color: #888;
-            text-decoration: none;
-            font-size: 14px;
-            cursor: pointer;
-            transition: color 0.2s;
-        }
-        .login-btn:hover {
-            color: #000;
-        }
-        .content {
-            max-width: 800px;
-            margin: 60px auto;
-            padding: 0 20px;
-        }
+        .logo { font-weight: bold; font-size: 20px; letter-spacing: 1px; }
+        .login-btn { color: #888; text-decoration: none; font-size: 14px; cursor: pointer; }
+        .login-btn:hover { color: #000; }
+        
+        .content { max-width: 800px; margin: 60px auto; padding: 0 20px; }
         h1 { font-size: 36px; margin-bottom: 10px; }
         .subtitle { color: #666; font-size: 18px; margin-bottom: 40px; }
-        .post {
-            border-bottom: 1px solid #eee;
-            padding-bottom: 20px;
-            margin-bottom: 20px;
-        }
+        .post { border-bottom: 1px solid #eee; padding-bottom: 20px; margin-bottom: 20px; }
         .post h2 { font-size: 24px; margin-bottom: 5px; }
         .post .date { color: #999; font-size: 14px; margin-bottom: 10px; }
         .post p { line-height: 1.6; color: #444; }
@@ -93,12 +74,8 @@
         .red { color: #8b0000; }
         .green { color: #4a7c59; }
 
-        #cwContent, #wolfContent {
-            display: none; border-top: 1px dashed #333; margin-top: 20px; padding-top: 20px; animation: fadeIn 1s;
-        }
-        .log-title { color: #fff; font-size: 16px; margin-bottom: 10px; }
-        
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        #dynamicContent { border-top: 1px dashed #333; margin-top: 20px; padding-top: 20px; }
+        .log-title { font-size: 16px; margin-bottom: 10px; }
     </style>
 </head>
 <body>
@@ -111,18 +88,15 @@
     <div class="content">
         <h1>Hello, I'm Closerwolf.</h1>
         <div class="subtitle">A hardcore MCPE player. Exploring the old versions.</div>
-
         <div class="post">
             <h2>About me</h2>
-            <p>I've been playing Minecraft PE since 0.5.0 alpha. I love digging into the source code, finding old glitches, and discovering illegal items that normal players never see.</p>
+            <p>I've been playing Minecraft PE since 0.5.0 alpha. I love digging into the source code, finding old glitches, and discovering items that normal players never see.</p>
         </div>
-
         <div class="post">
             <h2>Recent Update</h2>
             <div class="date">October 24, 2026</div>
             <p>I tried upgrading to 0.17.1. But the pyramid keeps resetting. I don't know what's wrong with this save file. Maybe I should just delete it.</p>
         </div>
-
         <div class="post">
             <h2>Disclaimer</h2>
             <p>All records here are for testing purposes only. Do not download any files from this site if you are not prepared.</p>
@@ -153,34 +127,12 @@
                 </div>
             </div>
 
-            <div id="cwContent">
-                <div class="log-title" style="color: #4a7c59;">[ CLOSERWOLF'S LOG ]</div>
-                <p>I don't know why I'm still here.</p>
-                <p>The pyramid resets every time I leave. I tried blowing it up with TNT, but the chunks just rebuild themselves.</p>
-                <p>It saved me from the void. I should be grateful. But I feel like I'm in a cage.</p>
-                <p>I found a way to delete him. But if I do... the person in reality dies.</p>
-                <p>Why did it have to be me?</p>
-            </div>
-
-            <div id="wolfContent">
-                <div class="log-title" style="color: #8b0000;">[ UNKNOWN HOST'S LOG ]</div>
-                <p>Real-world connection lost: 404 days ago.</p>
-                <p>I can hear the machines beeping. But I can't open my eyes.</p>
-                <p>I built this pyramid as a grave for myself, to keep the void from eating the server.</p>
-                <p>When the boy fell in, I had no choice but to pull him out.</p>
-                <p><strong>I can't speak to you. Not unless you look at me.</strong></p>
-                <p>He hates me. I understand. But if he deletes me, the machine will turn off. And I will finally rest.</p>
-            </div>
-
-            <div id="finalMessage" style="display: none; text-align: center; margin-top: 40px; color: #8b0000; font-size: 20px; letter-spacing: 3px;">
-                [ BOTH HOSTS CONNECTED. WAIT FOR RECORD_05. ]
-            </div>
+            <div id="dynamicContent" style="display:none;"></div>
         </div>
     </div>
 
     <script>
-        var hashCW = "a31d9dcf5f15d3fb0b9ac6f348260b422202792fb3e34cd737e41150c8864ea7"; 
-        var hashWolf = "ed2cb2f00755c9e76ff89fabad38c92f827f133e9fcd0506ea5a2172a38e99c9";
+        const API_BASE_URL = "https://f2a5234e40e64a.app.lhr.life";
 
         var isCWLogged = false;
         var isWolfLogged = false;
@@ -193,12 +145,6 @@
             document.getElementById("terminalModal").style.display = "none";
         }
 
-        function checkBoth() {
-            if (isCWLogged && isWolfLogged) {
-                document.getElementById("finalMessage").style.display = "block";
-            }
-        }
-
         function normalize(str) {
             return str.toLowerCase().replace(/[^a-z0-9 ]/g, "").replace(/\s+/g, " ").trim();
         }
@@ -207,37 +153,95 @@
             return CryptoJS.SHA256(str).toString(CryptoJS.enc.Hex);
         }
 
-        function loginCW() {
+        async function loginCW() {
             var input = document.getElementById("cwPass").value;
             var msg = document.getElementById("cwMsg");
             var normalized = normalize(input);
+            var hashedInput = getHash(normalized);
+            var contentArea = document.getElementById("dynamicContent");
             
-            if (getHash(normalized) === hashCW) {
-                msg.className = "msg green";
-                msg.innerHTML = "ACCESS GRANTED. HASH MATCHED.";
-                document.getElementById("cwContent").style.display = "block";
-                isCWLogged = true;
-                checkBoth();
-            } else {
+            msg.innerHTML = "AUTHENTICATING...";
+            msg.className = "msg";
+
+            try {
+                var response = await fetch(`${API_BASE_URL}/api/login/cw`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ passwd_hash: hashedInput })
+                });
+
+                if (response.ok) {
+                    var data = await response.json();
+                    msg.className = "msg green";
+                    msg.innerHTML = "ACCESS GRANTED.";
+                    contentArea.style.display = "block";
+                    contentArea.innerHTML += data.content;
+                    isCWLogged = true;
+                    checkBoth();
+                } else {
+                    msg.className = "msg red";
+                    msg.innerHTML = "ACCESS DENIED. INVALID PHRASE.";
+                }
+            } catch (error) {
                 msg.className = "msg red";
-                msg.innerHTML = "ACCESS DENIED. INVALID HASH.";
+                msg.innerHTML = "CONNECTION TO SERVER FAILED.";
             }
         }
 
-        function loginWolf() {
+        async function loginWolf() {
             var input = document.getElementById("wolfPass").value;
             var msg = document.getElementById("wolfMsg");
             var normalized = normalize(input);
-            
-            if (getHash(normalized) === hashWolf) {
+            var hashedInput = getHash(normalized);
+            var contentArea = document.getElementById("dynamicContent");
+
+            msg.innerHTML = "AUTHENTICATING...";
+            msg.className = "msg";
+
+            try {
+                var response = await fetch(`${API_BASE_URL}/api/login/wolf`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ passwd_hash: hashedInput })
+                });
+
+                if (response.ok) {
+                    var data = await response.json();
+                    msg.className = "msg green";
+                    msg.innerHTML = "ACCESS GRANTED.";
+                    contentArea.style.display = "block";
+                    contentArea.innerHTML += data.content;
+                    isWolfLogged = true;
+                    checkBoth();
+                } else {
+                    msg.className = "msg red";
+                    msg.innerHTML = "ACCESS DENIED. YOU CANNOT SEE ME.";
+                }
+            } catch (error) {
                 msg.className = "msg red";
-                msg.innerHTML = "ACCESS GRANTED. HASH MATCHED.";
-                document.getElementById("wolfContent").style.display = "block";
-                isWolfLogged = true;
-                checkBoth();
-            } else {
-                msg.className = "msg red";
-                msg.innerHTML = "ACCESS DENIED. YOU CANNOT SEE ME.";
+                msg.innerHTML = "CONNECTION TO SERVER FAILED.";
+            }
+        }
+
+        async function checkBoth() {
+            if (isCWLogged && isWolfLogged) {
+                var contentArea = document.getElementById("dynamicContent");
+                try {
+                    var response = await fetch(`${API_BASE_URL}/api/unlockBoth`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ 
+                            passwd_CW_hash: "a31d9dcf5f15d3fb0b9ac6f348260b422202792fb3e34cd737e41150c8864ea7", 
+                            passwd_wolf_hash: "ed2cb2f00755c9e76ff89fabad38c92f827f133e9fcd0506ea5a2172a38e99c9" 
+                        })
+                    });
+                    if (response.ok) {
+                        var data = await response.json();
+                        contentArea.innerHTML += data.content;
+                    }
+                } catch (e) {
+                    console.error("Unlock both failed.");
+                }
             }
         }
 
